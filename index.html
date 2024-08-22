@@ -21,8 +21,8 @@
     </style>
 </head>
 <body>
-    <h1>Background Music Example</h1>
-    <p>Click anywhere to start the music.</p>
+    <!-- Play Music Button -->
+    <button id="playButton">Play Background Music</button>
 
     <!-- Audio Element -->
     <audio id="backgroundMusic" loop>
@@ -31,27 +31,18 @@
     </audio>
 
     <script>
-        // Function to play music after user interaction
-        function playMusic() {
-            const music = document.getElementById('backgroundMusic');
+        // Get the button and audio elements
+        const playButton = document.getElementById('playButton');
+        const music = document.getElementById('backgroundMusic');
+
+        // Add an event listener to the button to start playing music
+        playButton.addEventListener('click', function() {
             music.play().catch(error => {
                 console.error("Music playback failed:", error);
             });
-        }
 
-        // Add an event listener for user interaction
-        document.addEventListener('click', function() {
-            playMusic();
-        }, { once: true }); // `once: true` ensures the event is only handled once
-
-        // Optional: Pause and resume music with JavaScript
-        document.addEventListener('keydown', function(event) {
-            const music = document.getElementById('backgroundMusic');
-            if (event.key === 'p') { // Press 'p' to pause
-                music.pause();
-            } else if (event.key === 'r') { // Press 'r' to resume
-                playMusic();
-            }
+            // Optionally, hide the button after playing the music
+            playButton.style.display = 'none';
         });
     </script>
     <h1>彈珠台抽籤器</h1>
