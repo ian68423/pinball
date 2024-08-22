@@ -4,41 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>彈珠台抽籤器</title>
-    <!-- Audio Element -->
-    <audio id="backgroundMusic" loop>
-        <source src="example.mp3" type="audio/mpeg">
-    </audio>
-
-    <script>
-        // Ensure the music starts playing after the webpage has loaded
-        window.onload = function() {
-            const music = document.getElementById('backgroundMusic');
-            music.play().catch(error => {
-                console.error("Music playback failed:", error);
-            });
-        };
-
-        // Optional: Pause and resume music with JavaScript
-        function pauseMusic() {
-            music.pause();
-        }
-
-        function playMusic() {
-            music.play().catch(error => {
-                console.error("Music playback failed:", error);
-            });
-        }
-
-        // Example of pausing and resuming music
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'p') { // Press 'p' to pause
-                pauseMusic();
-            } else if (event.key === 'r') { // Press 'r' to resume
-                playMusic();
-            }
-        });
-    </script>
-    
     <style>
         body {
             background-color: #121525;
@@ -56,6 +21,39 @@
     </style>
 </head>
 <body>
+    <h1>Background Music Example</h1>
+    <p>Click anywhere to start the music.</p>
+
+    <!-- Audio Element -->
+    <audio id="backgroundMusic" loop>
+        <source src="example.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        // Function to play music after user interaction
+        function playMusic() {
+            const music = document.getElementById('backgroundMusic');
+            music.play().catch(error => {
+                console.error("Music playback failed:", error);
+            });
+        }
+
+        // Add an event listener for user interaction
+        document.addEventListener('click', function() {
+            playMusic();
+        }, { once: true }); // `once: true` ensures the event is only handled once
+
+        // Optional: Pause and resume music with JavaScript
+        document.addEventListener('keydown', function(event) {
+            const music = document.getElementById('backgroundMusic');
+            if (event.key === 'p') { // Press 'p' to pause
+                music.pause();
+            } else if (event.key === 'r') { // Press 'r' to resume
+                playMusic();
+            }
+        });
+    </script>
     <h1>彈珠台抽籤器</h1>
     <div id="controls">
         <label for="pocketCount">球袋數量</label>
