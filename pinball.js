@@ -16,7 +16,9 @@ function drawPinballMachine() {
   const width = canvas.width;
   const height = canvas.height;
 
-  const pocketCount = parseInt(document.getElementById("pocketCount").value);
+  let pocketCount =
+    parseInt(document.getElementById("pocketCount").value) -
+    deletedPocketes.length;
 
   ctx.clearRect(0, 0, width, height);
 
@@ -51,7 +53,7 @@ function drawPinballMachine() {
 
   pockets = [];
   dividers = [];
-  const pocketWidth = (width - 20) / pocketCount;
+  let pocketWidth = (width - 20) / pocketCount;
 
   pocketColors = [];
   pocketLabels = [];
@@ -107,6 +109,8 @@ function startSimulation() {
   const height = canvas.height;
   const bounceRate = 0.6;
   const friction = 0.95;
+  let ballxRecord = [];
+  let ballyRecord = [];
 
   document.getElementById("drawButton").disabled = true;
   document.getElementById("runButton").disabled = true;
@@ -137,6 +141,7 @@ function startSimulation() {
   let ballY = Math.random() * 10 + 60;
   const ballRadius = 8;
   const gravity = 0.5;
+  const tailLength = 20;
   let speedY = 0;
   let speedX = 0;
 
@@ -145,6 +150,28 @@ function startSimulation() {
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, 10, height);
     ctx.fillRect(width - 10, 0, width, height);
+
+    //繪製殘影
+    ballxRecord.push(ballX);
+    ballyRecord.push(ballY);
+    if (ballxRecord.length > tailLength) {
+      ballxRecord.reverse();
+      ballxRecord.pop();
+      ballxRecord.reverse();
+      ballyRecord.reverse();
+      ballyRecord.pop();
+      ballyRecord.reverse();
+    }
+
+    ballxRecord.forEach((x, y) => {
+      ctx.beginPath();
+      ctx.arc(x, ballyRecord[y], ballRadius / tailLength * y, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(128,255,255,0.3)";
+      ctx.shadowColor = "rgba(0, 0, 0, 0.7)";
+      ctx.shadowBlur = 5;
+      ctx.fill();
+      ctx.closePath();
+    });
 
     // 繪製球袋
     pockets.forEach((pocket, index) => {
@@ -160,6 +187,14 @@ function startSimulation() {
           pocket.x + pocket.width / 2,
           height - 10
         );
+      } else {
+        ctx.fillStyle = "lightgray";
+        ctx.fillRect(pocket.x, height - 20, pocket.width, 20);
+        ctx.fillStyle = "black";
+        ctx.font = "bold 16px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("☉", pocket.x + pocket.width / 2, height - 10);
       }
     });
 
@@ -194,12 +229,14 @@ function startSimulation() {
             speedX *= friction; // 摩擦
             if (Math.sqrt(speedX ** 2 + speedY ** 2) <= gravity + 0.01) {
               pocketIndex = index;
+              ballxRecord = [];
+              ballyRecord = [];
             }
           } else {
-            ballY = 0;
-            speedY = 0;
-            ballX *= Math.random()*0.2 + 0.8;
-            speedX -= (ballX-width/2) * 0.01;
+            //球落入已經刪除的球袋
+            ballY = height - 20 - ballRadius;
+            speedY *= -(bounceRate ** 2 + 1); // 反彈係數
+            speedX *= friction + (Math.random() * 0.1 - 0.05); // 摩擦
           }
         }
       });
@@ -286,7 +323,7 @@ function startSimulation() {
     // 繪製彈珠
     ctx.beginPath();
     ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
-    ctx.fillStyle = "red";
+    ctx.fillStyle = "lightblue";
     ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
     ctx.shadowBlur = 5;
     ctx.fill();
@@ -319,6 +356,6 @@ function displayPocketNumber(number) {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillStyle = "black";
-  ctx.fillText(number, width / 2 , height / 2 + 6);
+  ctx.fillText(number, width / 2, height / 2 + 6);
   deletedPocketes.push(number - 1);
 }
